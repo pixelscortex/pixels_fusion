@@ -1,34 +1,23 @@
-import { queuedb } from "@/utils/db";
 import { CacheType, GuildMember, Interaction } from "discord.js";
+import { queueModel } from "./queue.model";
 
-const interaction = (i: Interaction<CacheType>) => {
+const interaction = async (i: Interaction<CacheType>) => {
   if (i.isChatInputCommand()) {
     const member = i.member as GuildMember;
+
     const options = i.options;
-    //    i.reply(`Joinned Queue for ${options.get("game")?.value}`);
-
-    const q = queuedb.find((g) => g.gameName === options.get("game")?.value);
-    if (q) {
-      const p1 = queuedb.findIndex((g) => g.uuid === member.id);
-      const p2 = queuedb.findIndex((g) => g.uuid === q.uuid);
-      i.reply(
-        `Joinned Queue for ${
-          options.get("game")?.value
-        } \n found a player waiting for you say hi to <@${q.uuid}> `
-      );
-
-      queuedb.slice(p1, 1);
-      queuedb.slice(p2, 1);
+    const gameName = options.get("game_name")?.value as string;
+    const gameMode = options.get("game_mode")?.value as string;
+    const gameRank = options.get("game_rank")?.value as string;
+    const user = member.id;
+    const queue = await queueModel({ gameName, gameMode, gameRank }, user);
+    if (queue === "in queue") {
+      i.reply(` You Are Already In Queue`);
+    } else if (queue?.id) {
+      i.reply(`Waiting For Players To Join`);
     } else {
-      i.reply(`Joinned Queue for ${options.get("game")?.value}`);
-
-      queuedb.push({
-        uuid: member.id,
-        gameName: options.get("game")?.value as string,
-      });
+      i.reply(`Try Again Later`);
     }
-
-    console.log(queuedb);
   }
 };
 
