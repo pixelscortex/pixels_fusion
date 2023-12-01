@@ -3,6 +3,7 @@ import { Client, Routes, SlashCommandBuilder } from "discord.js";
 import { REST } from "@discordjs/rest";
 import loadCommands from "@/utils/loadCommands";
 import loadInteractions from "./utils/loadInteraction";
+import prisma from "./utils/db/db";
 
 config();
 
@@ -21,7 +22,7 @@ async function main() {
 
   const rest = new REST({ version: "10" }).setToken(TOKEN);
 
-  client.once("ready", () => {
+  client.once("ready", async () => {
     console.log("Bot is online!");
   });
 
