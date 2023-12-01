@@ -1,5 +1,6 @@
 import prisma from "@/utils/db/db";
 import { QueueDetails } from "@/utils/types/queue";
+import axios from "axios";
 import { Guild } from "discord.js";
 
 export const queueModel = async (
@@ -43,6 +44,22 @@ export const queueModel = async (
       });
       return joinQueue;
     });
+    const summoner = await axios({
+      method: "get",
+      url: "https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/mawlaanaa",
+      headers: {
+        "X-Riot-Token": "RGAPI-81cbe41a-5d9b-463c-8a64-2ea95365013a",
+      },
+    });
+    const ranks = await axios({
+      method: "get",
+      url: `https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.data.id}`,
+      headers: {
+        "X-Riot-Token": "RGAPI-81cbe41a-5d9b-463c-8a64-2ea95365013a",
+      },
+    });
+    
+    
     return queue;
   } catch (error) {
     console.log(error);
