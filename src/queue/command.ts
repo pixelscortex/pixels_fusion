@@ -11,7 +11,8 @@ const queue = () =>
         .addChoices(
           { name: "League of Legends", value: "leagueoflegends" },
           { name: "Valorant", value: "valorant" },
-          { name: "Apex", value: "apex" }
+          { name: "Apex", value: "apex" },
+          { name: "Minecraft", value: "minecraft" }
         )
     );
 
