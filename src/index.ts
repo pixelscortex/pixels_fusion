@@ -1,10 +1,11 @@
 import { config } from "dotenv";
 import { Client, Routes, SlashCommandBuilder } from "discord.js";
 import { REST } from "@discordjs/rest";
-import { loaderCommands } from "./utils/loaders";
+import loadCommands from "@/utils/loadCommands";
+import loadInteractions from "./utils/loadInteraction";
+
 config();
 
-let lastmessage: string = "";
 const TOKEN = process.env.DISCORD_TOKEN;
 const CLIENT_ID = process.env.CLIENT_ID;
 const GUILD_ID = process.env.GUILD_ID;
@@ -24,8 +25,23 @@ async function main() {
     console.log("Bot is online!");
   });
 
-  //commands
-  const commands = await loaderCommands();
+  const interactions = await loadInteractions();
+  client.on("interactionCreate", async (interaction) => {
+    if (!interaction.isCommand()) return;
+
+    // Here, you would determine which interaction handler to use. This is a simplified example.
+    for (const handleInteraction of interactions) {
+      if (interaction.commandName === handleInteraction.s) {
+        try {
+          await handleInteraction.f(interaction);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
+  });
+
+  const commands = await loadCommands();
 
   try {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
@@ -33,12 +49,6 @@ async function main() {
     });
 
     client.login(TOKEN);
-
-    client.on("messageCreate", (message) => {
-      const messageFormate = `${message.member} sent message ${message.content} in ${message.channel}`;
-      lastmessage = messageFormate;
-      console.log(messageFormate);
-    });
   } catch (error) {
     console.log(error);
   }

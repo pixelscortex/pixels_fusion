@@ -25,5 +25,7 @@ Thumbs.db
 # Build directory
 /build/
 
+dist/
+
 # Optional: Ignore specific files that might contain sensitive information or local configurations
 /config.json

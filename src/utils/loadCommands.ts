@@ -1,8 +1,9 @@
 import { SlashCommandBuilder } from "discord.js";
 import { glob } from "glob";
 import path from "path";
-async function loaderCommands(): Promise<SlashCommandBuilder[]> {
-  const files = await glob(`**/*.command.ts`);
+
+export default async function loadCommands(): Promise<SlashCommandBuilder[]> {
+  const files = await glob(`**/command.ts`);
 
   const commands: SlashCommandBuilder[] = [];
 
@@ -12,20 +13,23 @@ async function loaderCommands(): Promise<SlashCommandBuilder[]> {
   files.map((file) => {
     totalFilesLoaded++;
     const filePath = path.resolve(file);
+    const commandName = path.basename(path.dirname(file));
     const command = require(filePath).default;
     if (
       typeof command === "function" &&
       command() instanceof SlashCommandBuilder
     ) {
       const ref = command() as SlashCommandBuilder;
+
       try {
+        ref.setName(commandName);
         ref.toJSON();
-        commands.push(command());
+        commands.push(ref);
 
         commandsLoaded++;
       } catch (error) {
         console.warn(
-          `Warning: The command in ${file} does not have name or description make, Sure SlashCommandBuilder has setName() & setDescription(). Skipping.`
+          `Warning: The command in ${file} does not have name or description make, Sure SlashCommandBuilder has setDescription(). Skipping.`
         );
       }
     } else {
@@ -38,5 +42,3 @@ async function loaderCommands(): Promise<SlashCommandBuilder[]> {
 
   return commands;
 }
-
-export { loaderCommands };
