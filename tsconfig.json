@@ -12,6 +12,9 @@
       "@/utils/*": ["./src/utils/*"]
     }
   },
+  "ts-node": {
+    "files": true
+  },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
