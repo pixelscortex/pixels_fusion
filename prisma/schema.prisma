@@ -16,8 +16,9 @@ model User {
 }
 
 model Guild {
-  id   String @id @map("_id")
-  name String
+  id    String  @id @map("_id")
+  name  String
+  Queue Queue[]
 }
 
 model Queue {
@@ -27,5 +28,7 @@ model Queue {
   gameName  String
   gameMode  String
   gameRank  String
+  guild     Guild   @relation(fields: [guildId], references: [id])
   fulfilled Boolean @default(false)
+  guildId   String
 }
