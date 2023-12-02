@@ -48,9 +48,9 @@ async function main() {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
       body: commands.map((c) => c.toJSON()),
     });
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {
-      body: commands.map((c) => c.toJSON()),
-    });
+    // await rest.put(Routes.applicationCommands(CLIENT_ID), {
+    //   body: commands.map((c) => c.toJSON()),
+    // });
     client.login(TOKEN);
   } catch (error) {
     console.log(error);

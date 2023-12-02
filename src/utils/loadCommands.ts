@@ -3,7 +3,7 @@ import { glob } from "glob";
 import path from "path";
 
 export default async function loadCommands(): Promise<SlashCommandBuilder[]> {
-  const files = await glob(`**/command.ts`);
+  const files = await glob(`**/*.command.ts`);
 
   const commands: SlashCommandBuilder[] = [];
 

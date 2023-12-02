@@ -12,6 +12,7 @@ datasource db {
 
 model User {
   id    String  @id @map("_id")
+  riot  Riot?
   Queue Queue[]
 }
 
@@ -31,4 +32,10 @@ model Queue {
   guild     Guild   @relation(fields: [guildId], references: [id])
   fulfilled Boolean @default(false)
   guildId   String
+}
+
+type Riot {
+  id        String
+  accountId String
+  puuid     String
 }

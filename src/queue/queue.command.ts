@@ -1,6 +1,6 @@
 import { SlashCommandBuilder } from "discord.js";
 
-const queue = () =>
+const command = () =>
   new SlashCommandBuilder()
     .setDescription("queue")
     .addStringOption((option) =>
@@ -14,4 +14,4 @@ const queue = () =>
         )
     );
 
-export default queue;
+export default command;
