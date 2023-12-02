@@ -14,12 +14,15 @@ import {
 } from "@discordjs/builders";
 import delay from "@/utils/delay";
 import { GamesGameMode } from "@/utils/choices/gameoptions";
+import { userModel } from "./user.model";
 
 const interaction = async (i: Interaction<CacheType>) => {
   if (i.isChatInputCommand()) {
     if (i.options.getSubcommand() === "riot") {
+      const member = i.member as GuildMember;
       const gameNameValue = i.options.get("game_name")?.value as Games;
       const inGameNameValue = i.options.get("in_game_name")?.value as string;
+      const gameServer = i.options.get("game_server")?.value as string;
       const embed = new EmbedBuilder()
         .setTitle("Confirm")
         .setDescription(
@@ -63,12 +66,27 @@ const interaction = async (i: Interaction<CacheType>) => {
       if (!gameModeSelectionInteraction) return;
       embed.setTitle("User Config");
       if (gameModeSelectionInteraction.customId === "confirm") {
-        embed.setDescription("Success").setColor(Colors.Green);
-        await reply.edit({
-          content: `user config update successfully`,
-          embeds: [embed],
-          components: [],
+        const result = await userModel({
+          servers: gameServer,
+          summonerName: inGameNameValue,
+          uid: member.id,
         });
+
+        if (result.error) {
+          embed.setDescription("Error").setColor(Colors.Red);
+          await reply.edit({
+            content: `failed to update your user please try again`,
+            embeds: [embed],
+            components: [],
+          });
+        } else {
+          embed.setDescription("Success").setColor(Colors.Green);
+          await reply.edit({
+            content: `user config update successfully`,
+            embeds: [embed],
+            components: [],
+          });
+        }
       } else {
         embed.setDescription("Aborted").setColor(Colors.Red);
         await reply.edit({ embeds: [embed], components: [] });

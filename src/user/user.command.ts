@@ -1,3 +1,4 @@
+import riotServers from "@/utils/choices/riotServers";
 import { SlashCommandBuilder } from "discord.js";
 
 const command = () =>
@@ -20,6 +21,13 @@ const command = () =>
           .setName("in_game_name")
           .setDescription("your in game name in the selected game")
           .setRequired(true)
+      )
+      .addStringOption((option) =>
+        option
+          .setName("game_server")
+          .setDescription("select game server")
+          .setRequired(true)
+          .addChoices(...riotServers)
       )
   );
 

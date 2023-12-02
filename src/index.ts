@@ -3,7 +3,7 @@ import { Client, Routes, SlashCommandBuilder } from "discord.js";
 import { REST } from "@discordjs/rest";
 import loadCommands from "@/utils/loadCommands";
 import loadInteractions from "./utils/loadInteraction";
-import prisma from "./utils/db/db";
+import prisma from "./utils/db";
 
 config();
 

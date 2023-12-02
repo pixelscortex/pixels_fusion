@@ -1,4 +1,4 @@
-import prisma from "@/utils/db/db";
+import prisma from "@/utils/db";
 
 import axios from "axios";
 import { Guild } from "discord.js";
