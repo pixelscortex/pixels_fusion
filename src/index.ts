@@ -3,7 +3,7 @@ import { Client, Routes, SlashCommandBuilder } from "discord.js";
 import { REST } from "@discordjs/rest";
 import loadCommands from "@/utils/loadCommands";
 import loadInteractions from "./utils/loadInteraction";
-import prisma from "./utils/db/db";
+import prisma from "./utils/db";
 
 config();
 
@@ -48,9 +48,9 @@ async function main() {
     await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
       body: commands.map((c) => c.toJSON()),
     });
-    await rest.put(Routes.applicationCommands(CLIENT_ID), {
-      body: commands.map((c) => c.toJSON()),
-    });
+    // await rest.put(Routes.applicationCommands(CLIENT_ID), {
+    //   body: commands.map((c) => c.toJSON()),
+    // });
     client.login(TOKEN);
   } catch (error) {
     console.log(error);

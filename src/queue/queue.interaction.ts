@@ -12,11 +12,10 @@ import {
   ButtonBuilder,
   EmbedBuilder,
 } from "@discordjs/builders";
-import { GamesGameMode } from "./gameoptions";
+import { GamesGameMode } from "../utils/choices/gameoptions";
 
 const interaction = async (i: Interaction<CacheType>) => {
   if (i.isChatInputCommand()) {
-    const gameName = i.options.get("game_name")?.name;
     const gameNameValue = i.options.get("game_name")?.value as Games;
 
     const embed = new EmbedBuilder()
@@ -29,7 +28,7 @@ const interaction = async (i: Interaction<CacheType>) => {
     let buttons: ButtonBuilder[] = [];
     console.log(gameNameValue);
 
-    buttons = choices.map(({ name, value }) => {
+    buttons = choices.modes.map(({ name, value }) => {
       return new ButtonBuilder()
         .setCustomId(value)
         .setLabel(name)
@@ -48,23 +47,21 @@ const interaction = async (i: Interaction<CacheType>) => {
 
     const gameModeSelectionInteraction = await reply
       .awaitMessageComponent({
-        time: 30_000,
+        time: 10_000,
       })
-      .catch(async (i) => {
-        await i.reply({
-          content: `Command Timeout`,
-          ephemeral: true,
-        });
+      .catch(async (error) => {
+        embed.setDescription("Timeout");
+        await reply.edit({ embeds: [embed], components: [] });
       });
 
     if (!gameModeSelectionInteraction) return;
 
-    const gameModeResult = choices.find(
+    const gameModeResult = choices.modes.find(
       (c) => c.value === gameModeSelectionInteraction.customId
     );
 
     await gameModeSelectionInteraction.reply({
-      content: `Joined Queue for ${gameModeResult} for ${gameName}`,
+      content: `Joined Queue for ${gameModeResult} in ${GamesGameMode[gameNameValue].gameName}`,
       ephemeral: true,
     });
   }

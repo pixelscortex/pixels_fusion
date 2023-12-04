@@ -5,7 +5,7 @@ import path from "path";
 export default async function loadInteractions(): Promise<
   { s: string; f: Function }[]
 > {
-  const files = await glob(`**/interaction.ts`);
+  const files = await glob(`**/*.interaction.ts`);
 
   const interactions: { s: string; f: Function }[] = [];
 
