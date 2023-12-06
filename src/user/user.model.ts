@@ -14,7 +14,7 @@ export const userModel = async ({
     method: "get",
     url: `https://${servers.toLowerCase()}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${summonerName}`,
     headers: {
-      "X-Riot-Token": "RGAPI-cb071760-0693-4f0f-90fa-70ca49c23ff2",
+      "X-Riot-Token": process.env.RIOT_API,
     },
   });
 
@@ -40,6 +40,7 @@ export const userModel = async ({
               id,
               accountId,
               puuid,
+              IGN: summonerName,
             },
           },
         });

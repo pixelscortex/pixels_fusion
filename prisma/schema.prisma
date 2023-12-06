@@ -38,4 +38,5 @@ type Riot {
   id        String
   accountId String
   puuid     String
+  IGN       String
 }

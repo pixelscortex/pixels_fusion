@@ -16,7 +16,7 @@ import { GamesGameMode } from "../utils/choices/gameoptions";
 
 const interaction = async (i: Interaction<CacheType>) => {
   if (i.isChatInputCommand()) {
-    const gameNameValue = i.options.get("game_name")?.value as Games;
+    const gameName = i.options.get("game_name")?.value as Games;
 
     const embed = new EmbedBuilder()
       .setTitle("Select Game Mode")
@@ -24,9 +24,8 @@ const interaction = async (i: Interaction<CacheType>) => {
       .setColor(Colors.Blue)
       .setTimestamp(new Date());
 
-    let choices = GamesGameMode[gameNameValue];
+    let choices = GamesGameMode[gameName];
     let buttons: ButtonBuilder[] = [];
-    console.log(gameNameValue);
 
     buttons = choices.modes.map(({ name, value }) => {
       return new ButtonBuilder()
@@ -44,7 +43,6 @@ const interaction = async (i: Interaction<CacheType>) => {
       //@ts-ignore
       components: [row],
     });
-
     const gameModeSelectionInteraction = await reply
       .awaitMessageComponent({
         time: 10_000,
@@ -56,12 +54,39 @@ const interaction = async (i: Interaction<CacheType>) => {
 
     if (!gameModeSelectionInteraction) return;
 
-    const gameModeResult = choices.modes.find(
+    const gameModeResult: any = choices.modes.find(
       (c) => c.value === gameModeSelectionInteraction.customId
     );
-
+    const user = i.user.id;
+    const guild: any = i.guild;
+    console.log(gameModeResult.name);
+    if (!gameModeResult.value) {
+      await gameModeSelectionInteraction.reply({
+        content: `error`,
+        ephemeral: true,
+      });
+    } else {
+      console.log("zeby");
+      const queue = await queueModel(
+        { gameMode: gameModeResult.name, gameName },
+        user,
+        guild
+      );
+      if (queue === "in queue") {
+        await gameModeSelectionInteraction.reply({
+          content: `You Have Already Joined Queue`,
+          ephemeral: true,
+        });
+      }
+      if (queue === "user doesn't exist") {
+        await gameModeSelectionInteraction.reply({
+          content: `You Should First Register With Your In Game Name Use "/user riot"`,
+          ephemeral: true,
+        });
+      }
+    }
     await gameModeSelectionInteraction.reply({
-      content: `Joined Queue for ${gameModeResult} in ${GamesGameMode[gameNameValue].gameName}`,
+      content: `Joined Queue for ${gameModeResult.name} in ${GamesGameMode[gameName].gameName}`,
       ephemeral: true,
     });
   }

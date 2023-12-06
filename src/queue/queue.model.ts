@@ -10,20 +10,20 @@ export const queueModel = async (
 ) => {
   try {
     const { id, name } = guild;
-    const { gameMode, gameName, gameRank } = queueDetails;
+    const { gameMode, gameName } = queueDetails;
     const queue = await prisma.$transaction(async (prisma) => {
-      let newUser = user;
-      const validateuser = await prisma.user.findUnique({
+      let newUserId = user;
+      let validateuser = await prisma.user.findUnique({
         where: { id: user },
       });
       const validateQueue = validateuser
         ? await prisma.queue.findFirst({
-            where: { userId: newUser, fulfilled: false },
+            where: { userId: newUserId, fulfilled: false },
           })
         : undefined;
       if (validateQueue) return "in queue";
       if (!validateuser) {
-        newUser = (await prisma.user.create({ data: { id: user } })).id;
+        return "user doesn't exist";
       }
       const validateGuild = await prisma.guild.findUnique({
         where: { id: guild.id },
@@ -33,30 +33,31 @@ export const queueModel = async (
           data: { id, name },
         });
       }
+      const summoner = await axios({
+        method: "get",
+        url: `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${validateuser.riot?.IGN}`,
+        headers: {
+          "X-Riot-Token": process.env.RIOT_API,
+        },
+      });
+      const ranks = await axios({
+        method: "get",
+        url: `https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.data.id}`,
+        headers: {
+          "X-Riot-Token": process.env.RIOT_API,
+        },
+      });
       const joinQueue = await prisma.queue.create({
         data: {
           gameMode,
-          gameName,
-          gameRank,
-          userId: newUser,
+          gameRank:
+            gameMode === "Flex" ? ranks.data[1].tier : ranks.data[0].tier,
+          userId: newUserId,
           guildId: guild.id,
+          gameName,
         },
       });
       return joinQueue;
-    });
-    const summoner = await axios({
-      method: "get",
-      url: "https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/mawlaanaa",
-      headers: {
-        "X-Riot-Token": "RGAPI-81cbe41a-5d9b-463c-8a64-2ea95365013a",
-      },
-    });
-    const ranks = await axios({
-      method: "get",
-      url: `https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.data.id}`,
-      headers: {
-        "X-Riot-Token": "RGAPI-81cbe41a-5d9b-463c-8a64-2ea95365013a",
-      },
     });
 
     return queue;

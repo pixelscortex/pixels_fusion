@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "build": "tsc && tsc-alias",
-    "generate": "npx prisma format && npx prisma generate && npx prisma db push"
+    "generate": "npx prisma format && npx prisma generate && npx prisma db push "
   },
   "keywords": [],
   "author": "",
