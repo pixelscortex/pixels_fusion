@@ -41,6 +41,7 @@ export const userModel = async ({
               accountId,
               puuid,
               IGN: summonerName,
+              server: servers.toLowerCase(),
             },
           },
         });

@@ -35,14 +35,14 @@ export const queueModel = async (
       }
       const summoner = await axios({
         method: "get",
-        url: `https://eun1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${validateuser.riot?.IGN}`,
+        url: `https://${validateuser.riot?.server}.api.riotgames.com/lol/summoner/v4/summoners/by-name/${validateuser.riot?.IGN}`,
         headers: {
           "X-Riot-Token": process.env.RIOT_API,
         },
       });
       const ranks = await axios({
         method: "get",
-        url: `https://eun1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.data.id}`,
+        url: `https://${validateuser.riot?.server}.api.riotgames.com/lol/league/v4/entries/by-summoner/${summoner.data.id}`,
         headers: {
           "X-Riot-Token": process.env.RIOT_API,
         },
