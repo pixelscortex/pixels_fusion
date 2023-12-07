@@ -66,7 +66,6 @@ const interaction = async (i: Interaction<CacheType>) => {
         ephemeral: true,
       });
     } else {
-      console.log("zeby");
       const queue = await queueModel(
         { gameMode: gameModeResult.name, gameName },
         user,
